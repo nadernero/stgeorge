@@ -231,7 +231,7 @@
         <div class="container mx-auto px-4 py-8 md:py-12">
             <header class="text-center mb-10">
                 <h1 class="h1 text-slate-700 dark:text-slate-300">نظام إدارة خدمة ابتدائي</h1>
-                <h2 class="h2 text-teal-700 dark:text-teal-400 mt-2">كنيسة مار جرجس بالعبور</h2>
+                <h2 class="h2 text-teal-700 dark:text-teal-400 mt-2">كنيسة مار جرجس بقويسنا </h2>
                 <p class="mt-4 text-lg text-slate-600 dark:text-slate-400">اختر الخدمة التي تريدها</p>
             </header>
             <main id="servicesGrid" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
@@ -251,11 +251,6 @@
                 </div>
                 <div id="sidebarLinks" class="flex-grow pt-4">
                     <a href="#" data-page="homePage" class="sidebar-link active flex items-center py-3 px-4 text-slate-700 dark:text-slate-300"><i class="fas fa-tachometer-alt ml-3 w-6 text-center"></i> لوحة المعلومات</a>
-                    <a href="#" data-page="serviceAnnouncementsPage" id="serviceAnnouncementsLink" class="sidebar-link relative flex items-center py-3 px-4 text-slate-700 dark:text-slate-300 hidden-view">
-                        <i class="fas fa-bullhorn ml-3 w-6 text-center"></i>
-                        <span>لوحة الإعلانات</span>
-                        <span id="serviceAnnouncementsBadge" class="notification-badge hidden-view absolute top-2 right-2 w-5 h-5 text-xs"></span>
-                    </a>
                     <a href="#" data-page="correspondencePage" id="correspondenceLink" class="sidebar-link relative flex items-center py-3 px-4 text-slate-700 dark:text-slate-300 hidden-view">
                         <i class="fas fa-envelope-open-text ml-3 w-6 text-center"></i>
                         <span>صندوق الرسائل</span>
@@ -267,6 +262,11 @@
                     <a href="#" data-page="correspondenceCenterPage" id="correspondenceCenterLink" class="sidebar-link flex items-center py-3 px-4 text-slate-700 dark:text-slate-300 hidden-view">
                         <i class="fas fa-paper-plane ml-3 w-6 text-center"></i>
                         <span>مركز المراسلات</span>
+                    </a>
+                    <a href="#" data-page="serviceAnnouncementsPage" id="serviceAnnouncementsLink" class="sidebar-link relative flex items-center py-3 px-4 text-slate-700 dark:text-slate-300 hidden-view">
+                        <i class="fas fa-bullhorn ml-3 w-6 text-center"></i>
+                        <span>لوحة الإعلانات</span>
+                        <span id="serviceAnnouncementsBadge" class="notification-badge hidden-view absolute top-2 right-2 w-5 h-5 text-xs"></span>
                     </a>
                     <a href="#" data-page="announcementsBoardPage" id="announcementsBoardLink" class="sidebar-link relative flex items-center py-3 px-4 text-slate-700 dark:text-slate-300 hidden-view">
                         <i class="fas fa-bullhorn ml-3 w-6 text-center"></i>
@@ -895,7 +895,7 @@
                 isGroup: true, 
                 children: [
                     { name: "الامين العام", icon: '<i class="fas fa-user-shield"></i>', color: 'blue', isGeneralSecretary: true, description: "الدخول للوحة المعلومات الشاملة" },
-                    { name: "خدمة ابتدائي", icon: '<i class="fas fa-church"></i>', color: 'orange', isUnderConstruction: true, description: "نظام إدارة خدمة ابتدائي الشامل" }
+                    { name: "خدمة ابتدائي", icon: '<i class="fas fa-church"></i>', color: 'orange', isUnderConstruction: false, description: "نظام إدارة خدمة ابتدائي الشامل" }
                 ]
             }
         ];
@@ -1059,18 +1059,32 @@
             DOMElements.servicesGrid.innerHTML = '';
             services.forEach(service => {
                 const card = document.createElement('div');
-                card.className = `service-card relative bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg hover:shadow-2xl hover:-translate-y-1 transform transition-all duration-300 cursor-pointer flex flex-col items-center text-center border-2 border-transparent hover:ring-4 hover:ring-offset-2 hover:ring-${service.color}-400 dark:hover:ring-offset-slate-900`;
-                card.dataset.serviceName = service.name;
                 const badgeId = `service-badge-${service.name.replace(/\s+/g, '-')}`;
+                
+                // [MODIFIED] Special styling for the "الامين العام" card
+                if (service.name === "الامين العام") {
+                    card.className = `service-card relative bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 p-6 rounded-xl shadow-lg hover:shadow-amber-500/30 hover:shadow-xl hover:-translate-y-1 transform transition-all duration-300 cursor-pointer flex flex-col items-center text-center border-2 border-amber-400 dark:border-amber-600`;
+                    card.innerHTML = `
+                        <span id="${badgeId}" class="notification-badge hidden-view absolute top-2 right-2 w-6 h-6 text-sm"></span>
+                        <div class="w-20 h-20 mb-4 rounded-full flex items-center justify-center bg-gradient-to-br from-amber-300 to-amber-500 dark:from-amber-500 dark:to-amber-700 shadow-lg">
+                             <span class="text-4xl text-white">${service.icon}</span>
+                        </div>
+                        <h3 class="h3 flex-grow text-slate-800 dark:text-amber-300">${service.name}</h3>
+                        <p class="mt-2 text-sm font-bold bg-amber-500 hover:bg-amber-600 text-white py-1.5 px-4 rounded-full transition-colors">دخول للوحة التحكم</p>
+                    `;
+                } else {
+                    card.className = `service-card relative bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg hover:shadow-2xl hover:-translate-y-1 transform transition-all duration-300 cursor-pointer flex flex-col items-center text-center border-2 border-transparent hover:ring-4 hover:ring-offset-2 hover:ring-${service.color}-400 dark:hover:ring-offset-slate-900`;
+                    card.innerHTML = `
+                        <span id="${badgeId}" class="notification-badge hidden-view absolute top-2 right-2 w-6 h-6 text-sm"></span>
+                        <div class="w-20 h-20 mb-4 rounded-full flex items-center justify-center bg-gradient-to-br from-${service.color}-100 to-${service.color}-200 dark:from-${service.color}-800/50 dark:to-${service.color}-900/50 shadow-inner">
+                             <span class="text-4xl text-${service.color}-600 dark:text-${service.color}-300">${service.icon}</span>
+                        </div>
+                        <h3 class="h3 flex-grow">${service.name}</h3>
+                        <p class="mt-2 text-sm font-semibold bg-${service.color}-500 text-white py-1 px-3 rounded-full">دخول</p>
+                    `;
+                }
 
-                card.innerHTML = `
-                    <span id="${badgeId}" class="notification-badge hidden-view absolute top-2 right-2 w-6 h-6 text-sm"></span>
-                    <div class="w-20 h-20 mb-4 rounded-full flex items-center justify-center bg-gradient-to-br from-${service.color}-100 to-${service.color}-200 dark:from-${service.color}-800/50 dark:to-${service.color}-900/50 shadow-inner">
-                         <span class="text-4xl text-${service.color}-600 dark:text-${service.color}-300">${service.icon}</span>
-                    </div>
-                    <h3 class="h3 flex-grow">${service.name}</h3>
-                    <p class="mt-2 text-sm font-semibold bg-${service.color}-500 text-white py-1 px-3 rounded-full">دخول</p>
-                `;
+                card.dataset.serviceName = service.name;
                 DOMElements.servicesGrid.appendChild(card);
             });
         }
@@ -3874,18 +3888,17 @@
                         `;
                     });
                 } else {
-                    modalBody.className = 'mt-6 grid grid-cols-1 gap-6';
+                    modalBody.className = 'mt-6 grid grid-cols-1 md:grid-cols-2 gap-6';
                     modalBody.innerHTML = `
                         <div data-action="login-leader" data-service-name="${service.name}" class="p-8 rounded-xl text-center cursor-pointer transition-all duration-300 transform hover:scale-[1.03] bg-gradient-to-br from-teal-500 to-cyan-600 text-white shadow-lg ring-4 ring-white/50 hover:shadow-2xl">
                             <div class="text-5xl mb-4"><i class="fas fa-user-tie"></i></div>
-                            <h3 class="text-2xl font-bold">الدخول لأمين الخدمة</h3>
+                            <h3 class="text-2xl font-bold"> لأمين الخدمة</h3>
                             <p class="text-sm text-cyan-100 mt-1">إدارة الخدام، الحضور، التقارير...</p>
                         </div>
-                        <div data-action="login-servant" class="relative p-6 rounded-lg text-center cursor-not-allowed bg-slate-100 dark:bg-slate-700/80 border border-dashed border-slate-400 dark:border-slate-600">
-                             <div class="absolute top-2 left-2 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded-md transform -rotate-12 z-10">تحت الإنشاء</div>
-                            <div class="text-5xl mb-3 text-slate-400 dark:text-slate-500"><i class="fas fa-users"></i></div>
-                            <h3 class="h3 text-slate-600 dark:text-slate-300">الدخول للخدام (المخدومين)</h3>
-                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">نظام إدارة المخدومين.</p>
+                        <div data-action="login-servant" class="p-8 rounded-xl text-center cursor-pointer transition-all duration-300 transform hover:scale-[1.03] bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg ring-4 ring-white/50 hover:shadow-2xl">
+                            <div class="text-5xl mb-4"><i class="fas fa-users"></i></div>
+                            <h3 class="text-2xl font-bold"> للخدام والمخدومين</h3>
+                            <p class="text-sm text-indigo-100 mt-1">نظام إدارة المخدومين.</p>
                         </div>
                     `;
                 }
@@ -3914,7 +3927,7 @@
                         break;
                     case 'login-servant':
                     case 'login-primary-service':
-                        showMessage("هذه الخدمة تحت الإنشاء حالياً.", false);
+                        window.location.href = 'https://nadernero.github.io/2203/';
                         break;
                 }
             });
