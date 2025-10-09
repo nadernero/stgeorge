@@ -231,12 +231,28 @@
         <div class="container mx-auto px-4 py-8 md:py-12">
             <header class="text-center mb-10">
                 <h1 class="h1 text-slate-700 dark:text-slate-300">نظام إدارة خدمة ابتدائي</h1>
-                <h2 class="h2 text-teal-700 dark:text-teal-400 mt-2">كنيسة مار جرجس بقويسنا </h2>
+                <h2 class="h2 text-teal-700 dark:text-teal-400 mt-2">كنيسة مار جرجس بقويسنا</h2>
                 <p class="mt-4 text-lg text-slate-600 dark:text-slate-400">اختر الخدمة التي تريدها</p>
             </header>
             <main id="servicesGrid" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
                 <!-- Service Cards populated by JS -->
             </main>
+        </div>
+    </div>
+
+    <!-- [NEW] Iframe View for External Apps -->
+    <div id="iframeView" class="hidden-view fixed inset-0 z-40 flex flex-col bg-slate-200 dark:bg-slate-900">
+        <header class="flex-shrink-0 bg-white dark:bg-slate-800 shadow-md p-4 flex items-center justify-between">
+            <h2 id="iframeTitle" class="h3 text-teal-600 dark:text-teal-400"></h2>
+            <button id="backFromIframeBtn" class="bg-slate-500 hover:bg-slate-600 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 flex items-center justify-center">
+                <i class="fas fa-arrow-right-from-bracket mr-2"></i> العودة للقائمة الرئيسية
+            </button>
+        </header>
+        <div class="flex-grow relative">
+            <div id="iframeLoading" class="absolute inset-0 z-10 flex items-center justify-center bg-slate-200 dark:bg-slate-900">
+                <div class="loader"></div>
+            </div>
+            <iframe id="externalAppFrame" class="w-full h-full border-0" src="about:blank"></iframe>
         </div>
     </div>
     
@@ -1181,6 +1197,16 @@
             }
             if (pageId === 'reportsPage') loadReportsPage();
             if (pageId === 'serviceAnnouncementsPage') markServiceAnnouncementsAsRead();
+        }
+
+        function openExternalApp(url, title) {
+            closeModal(DOMElements.serviceChoiceModal);
+            DOMElements.loginOrServicesView.classList.add('hidden-view');
+            DOMElements.iframeView.classList.remove('hidden-view');
+            DOMElements.iframeTitle.textContent = title;
+            DOMElements.iframeLoading.classList.remove('hidden-view');
+            DOMElements.iframeLoading.classList.add('flex');
+            DOMElements.externalAppFrame.src = url;
         }
 
         async function listenForUnreadNotesForBadge() {
@@ -3926,10 +3952,23 @@
                         await showDashboard();
                         break;
                     case 'login-servant':
+                         openExternalApp('https://nadernero.github.io/2203/', 'نظام إدارة المخدومين');
+                        break;
                     case 'login-primary-service':
-                        window.location.href = 'https://nadernero.github.io/2203/';
+                        openExternalApp('https://nadernero.github.io/2203/', 'نظام خدمة ابتدائي الشامل');
                         break;
                 }
+            });
+
+            DOMElements.backFromIframeBtn.addEventListener('click', () => {
+                DOMElements.iframeView.classList.add('hidden-view');
+                DOMElements.loginOrServicesView.classList.remove('hidden-view');
+                DOMElements.externalAppFrame.src = 'about:blank';
+            });
+
+            DOMElements.externalAppFrame.addEventListener('load', () => {
+                DOMElements.iframeLoading.classList.add('hidden-view');
+                DOMElements.iframeLoading.classList.remove('flex');
             });
             
             document.querySelectorAll('.close-modal-btn').forEach(btn => {
@@ -4035,7 +4074,7 @@
                                     } else {
                                         servant.dob = null;
                                     }
-                                }
+                                 }
                             }
                             await addServant(servant);
                             importedCount++;
@@ -4301,6 +4340,11 @@
                 loginOrServicesView: document.getElementById('loginOrServicesView'),
                 servicesGrid: document.getElementById('servicesGrid'),
                 mainDashboard: document.getElementById('mainDashboard'),
+                iframeView: document.getElementById('iframeView'),
+                backFromIframeBtn: document.getElementById('backFromIframeBtn'),
+                externalAppFrame: document.getElementById('externalAppFrame'),
+                iframeTitle: document.getElementById('iframeTitle'),
+                iframeLoading: document.getElementById('iframeLoading'),
                 sidebar: document.getElementById('sidebar'),
                 sidebarOverlay: document.getElementById('sidebarOverlay'),
                 hamburgerBtn: document.getElementById('hamburgerBtn'),
